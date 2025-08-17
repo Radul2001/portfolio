@@ -328,15 +328,22 @@
       }
 
       /* ===== NAVIGATION ===== */
-      .navbar {
+      .nav-menu {
         position: fixed;
-        top: 0;
+        top: 100%;
+        left: 0;
         width: 100%;
-        z-index: 1000;
-        padding: 1rem 0;
+        height: 100vh;
+        background: rgba(10, 10, 10, 0.95);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
         transition: all 0.3s ease;
+        transform: translateY(-100vh);
+        opacity: 0;
+        visibility: hidden;
       }
 
       .navbar.scrolled {
@@ -1264,6 +1271,9 @@
 
         .nav-menu.active {
           top: 0;
+          transform: translateY(0);
+          opacity: 1;
+          visibility: visible;
         }
 
         .mobile-toggle {
@@ -2270,11 +2280,39 @@
       // Close mobile menu when clicking on links
       document.querySelectorAll(".nav-link").forEach((link) => {
         link.addEventListener("click", () => {
+          // Only close menu if we're in mobile view
+          if (window.innerWidth <= 768) {
+            navMenu.classList.remove("active");
+            const icon = mobileToggle.querySelector("i");
+            icon.classList.add("fa-bars");
+            icon.classList.remove("fa-times");
+          }
+        });
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          window.innerWidth <= 768 &&
+          navMenu.classList.contains("active") &&
+          !navMenu.contains(e.target) &&
+          !mobileToggle.contains(e.target)
+        ) {
           navMenu.classList.remove("active");
           const icon = mobileToggle.querySelector("i");
           icon.classList.add("fa-bars");
           icon.classList.remove("fa-times");
-        });
+        }
+      });
+
+      // Close mobile menu on window resize
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 768) {
+          navMenu.classList.remove("active");
+          const icon = mobileToggle.querySelector("i");
+          icon.classList.add("fa-bars");
+          icon.classList.remove("fa-times");
+        }
       });
 
       // ===== ACTIVE NAVIGATION HIGHLIGHTING =====
